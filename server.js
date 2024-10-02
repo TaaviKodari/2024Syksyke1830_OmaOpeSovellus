@@ -6,9 +6,20 @@ const port = 3000;
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
-app.post('/get-question',(req, res)=>{
+app.post('/chat', async(req, res)=>{
     const question = req.body.question;
     console.log(question);
+
+    try{  
+       
+    }catch(error){
+        
+    }
+    if(question){
+        res.json({question:`Käyttäjä sanoi ${question}`});
+    }else{
+        res.status(400).json({error:'viesti puuttui.'})
+    }
 });
 
 app.listen(port,() =>{

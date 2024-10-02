@@ -5,7 +5,7 @@ document.getElementById('user-input').addEventListener('keypress', function(e){
     }
 });
 
-function sendMessage(){
+async function sendMessage(){
     const userInput = document.getElementById('user-input').value;
     //poistaa tyhjät merkit alusta ja lopusta ja jos tekstikenttä tyhjä, poistuu funktiosta
     if(userInput.trim() === '') return;
@@ -13,13 +13,22 @@ function sendMessage(){
     
     addMessageToChatBox(userInput);
 
-    fetch('/get-question',{
-        method: 'POST',
-        headers:{
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({question:userInput})
-    });
+    try{
+        const response = await fetch('/chat',{
+             method: 'POST',
+             headers:{
+                 'Content-Type': 'application/json'
+             },
+             body: JSON.stringify({question:userInput})
+         });
+     
+         const data = await response.json();
+     
+         console.log(data);
+    }catch(error){
+        console.error('Error', error);
+        addMessageToChatBox('ChatGPT: Jotain meni pieleen!');
+    }
 
     //Clear input field tyhjentää tekstikentän
     document.getElementById('user-input').value = '';
