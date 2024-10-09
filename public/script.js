@@ -25,6 +25,7 @@ async function sendMessage(){
          const data = await response.json();
      
          console.log(data);
+         addMessageToChatBox(data.reply);
     }catch(error){
         console.error('Error', error);
         addMessageToChatBox('ChatGPT: Jotain meni pieleen!');
