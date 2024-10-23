@@ -11,7 +11,7 @@ async function sendMessage(){
     if(userInput.trim() === '') return;
     console.log(userInput);
     
-    addMessageToChatBox(userInput);
+    addMessageToChatBox('Sinä: ' + userInput,'user-message');
 
     try{
         const response = await fetch('/chat',{
@@ -25,18 +25,19 @@ async function sendMessage(){
          const data = await response.json();
      
          console.log(data);
-         addMessageToChatBox(data.reply);
+         addMessageToChatBox(data.reply,'bot-message');
     }catch(error){
         console.error('Error', error);
-        addMessageToChatBox('ChatGPT: Jotain meni pieleen!');
+        addMessageToChatBox('ChatGPT: Jotain meni pieleen!','bot-message');
     }
 
     //Clear input field tyhjentää tekstikentän
     document.getElementById('user-input').value = '';
 }
-function addMessageToChatBox(message){
+function addMessageToChatBox(message,className){
     //luodaan uusi div
     const messageElement = document.createElement('div');
+    messageElement.classList.add('message',className);
     //lisätään käyttäjän viesti uuteen diviin
     messageElement.textContent = message;
     console.log(messageElement);
