@@ -4,6 +4,26 @@ document.getElementById('user-input').addEventListener('keypress', function(e){
         sendMessage();
     }
 });
+document.getElementById('send-images-button').addEventListener('click',sendImages);
+
+function sendImages(){
+    console.log("Kuvia lähetetty!");
+    const imageInput = document.getElementById('image-input');
+    console.log(imageInput.files); 
+    const files = imageInput.files;
+    if(files.length === 0){
+        alert('Valitse kuvia ensin!');
+        return;
+    }
+
+    const formData = new FormData();
+
+    for(let i = 0; i < files.length; i++){
+        formData.append('images',files[i]);
+    }
+
+    console.log(formData);
+}
 
 async function sendMessage(){
     const userInput = document.getElementById('user-input').value;
