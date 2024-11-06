@@ -6,7 +6,7 @@ document.getElementById('user-input').addEventListener('keypress', function(e){
 });
 document.getElementById('send-images-button').addEventListener('click',sendImages);
 
-function sendImages(){
+async function sendImages(){
     console.log("Kuvia lähetetty!");
     const imageInput = document.getElementById('image-input');
     console.log(imageInput.files); 
@@ -23,6 +23,15 @@ function sendImages(){
     }
 
     console.log(formData);
+
+    try{
+        const response = await fetch('/upload-Images',{
+            method:'POST',
+            body:formData
+        })
+    }catch(error){
+        console.error('Error:',error);
+    }
 }
 
 async function sendMessage(){
