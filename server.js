@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import multer from 'multer';
@@ -14,6 +14,9 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 
 const client = new vision.ImageAnnotatorClient({keyFilename:'omaope-vision.json'});
+
+let koealueTekstina = '';
+let context = [] // chat gpt keskustelulista
 
 app.post('/chat', async(req, res)=>{
     const question = req.body.question;
@@ -64,7 +67,28 @@ app.post('/upload-Images',upload.array('images',10) ,async(req,res)=>{
             const detections = result.textAnnotations;
             return detections.length > 0 ? detections[0].description : '';
         }))
-        console.log('ocr:' + texts);
+        
+        koealueTekstina = texts.join('');
+        console.log(koealueTekstina);
+        context =[{role:'user', content:koealueTekstina}];
+
+        const reponse = await fetch('https://api.openai.com/v1/chat/completions',{
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model:'gpt-4o-mini',
+                messages: context.concat([
+                    {role:'user', content: 'Luo yksinkertainen ja selkeä kysymys ja sen vastaus yllä olevasta tekstistä suomeksi. Kysy vain yksi asia kerrallaan'}
+                ]),
+                max_tokens:150
+            })
+        });
+        const data = await response.json();
+        console.log(data);
+
     }catch(error){
         console.error('Error', error.message);
         res.status(500).json({error:error.message});
