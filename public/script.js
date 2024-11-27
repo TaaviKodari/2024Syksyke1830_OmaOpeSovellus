@@ -1,3 +1,5 @@
+let currentQuestion ='';
+let correctAnswer = '';
 document.getElementById('send-button').addEventListener('click',sendMessage);
 document.getElementById('user-input').addEventListener('keypress', function(e){
     if(e.key === 'Enter'){
@@ -29,6 +31,9 @@ async function sendImages(){
             method:'POST',
             body:formData
         })
+        const data = await response.json();
+        console.log(data);
+
     }catch(error){
         console.error('Error:',error);
     }
