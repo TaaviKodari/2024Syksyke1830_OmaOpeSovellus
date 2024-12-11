@@ -9,7 +9,7 @@ document.getElementById('user-input').addEventListener('keypress', function(e){
 document.getElementById('send-images-button').addEventListener('click',sendImages);
 document.getElementById('send-answer-button').addEventListener('click',sendAnswer);
 
-function sendAnswer(){
+async function sendAnswer(){
     //console.log("Lähetetään vastausta");
     const answerInput = document.getElementById('answer-input').value;
     if(answerInput.trim() === '') return;
@@ -18,7 +18,15 @@ function sendAnswer(){
     addMessageToChatBox('Sinä: ' + answerInput,'user-message', 'omaopebox');
 
     try{
- 
+        const response = await fetch('/check-answer',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({user_answer: answerInput, correct_answer: correctAnswer})
+        });
+        const data = await response.json();
+        addMessageToChatBox('OmaOpe: ' + data.evaluation,'bot-message','omaopebox');
     }catch(error){
         console.log('Error:',error);
     }

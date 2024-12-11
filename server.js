@@ -20,6 +20,37 @@ let context = [] // chat gpt keskustelulista
 let currentQuestion =''; //muuttuja kysymyksen tallentamiseen
 let correctAnswer = '';//muuttuja oikean vastauksen tallentamiseen
 
+app.post('/check-answer', async(req,res)=>{
+    const useranswer = req.body.user_answer;
+    console.log(useranswer);
+    try{
+        const response = await fetch('https://api.openai.com/v1/chat/completions',{
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model:'gpt-4o-mini',
+                messages:[
+                    {role:'system', content: 'Ole aina ystävällinen opettaja, joka arvioi oppilaan vastauksen kohteliaaseen sävyyn'},
+                    {role:'user', content:`Kysymys ${currentQuestion}`},
+                    {role:'user', content:`Oikea vastaus ${correctAnswer}`},
+                    {role:'user', content:`Opiskelijan vastaus ${useranswer}`},
+                    {role:'user', content:'Arvioi opiskelijan vastaus asteikolla 0-10 ja anna lyhyt selitys ystävällisin ja kannustavin sanoin.'},
+                ],
+                max_tokens:150
+            })
+           });
+           const data = await response.json();
+           const evaluation = data.choices[0].message.content.trim();
+           console.log("Arvio: ", evaluation);
+           res.json({evaluation});
+    }catch(error){
+
+    }
+})
+
 app.post('/chat', async(req, res)=>{
     const question = req.body.question;
     console.log(question);
